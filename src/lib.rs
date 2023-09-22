@@ -440,11 +440,13 @@ impl<'a> Exporter<'a> {
             });
         }
         let content = fs::read_to_string(path).context(ReadSnafu { path })?;
-        let (frontmatter, content) =
+        let (frontmatter, mut content) =
             matter::matter(&content).unwrap_or(("".to_string(), content.to_string()));
         let frontmatter =
             frontmatter_from_str(&frontmatter).context(FrontMatterDecodeSnafu { path })?;
 
+        content = format!("# {}\n\n{}", path.file_stem().unwrap().to_str().unwrap(), content);
+        
         let mut parser_options = Options::empty();
         parser_options.insert(Options::ENABLE_TABLES);
         parser_options.insert(Options::ENABLE_FOOTNOTES);
