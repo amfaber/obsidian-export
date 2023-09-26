@@ -233,6 +233,7 @@ pub struct Exporter<'a> {
     process_embeds_recursively: bool,
     postprocessors: Vec<&'a Postprocessor>,
     embed_postprocessors: Vec<&'a Postprocessor>,
+    verbosity: u32,
 }
 
 impl<'a> fmt::Debug for Exporter<'a> {
@@ -276,6 +277,7 @@ impl<'a> Exporter<'a> {
             vault_contents: None,
             postprocessors: vec![],
             embed_postprocessors: vec![],
+            verbosity: 1,
         }
     }
 
@@ -576,13 +578,15 @@ impl<'a> Exporter<'a> {
 
         if path.is_none() {
             // TODO: Extract into configurable function.
-            eprintln!(
-                "Warning: Unable to find embedded note\n\tReference: '{}'\n\tSource: '{}'\n",
-                note_ref
-                    .file
-                    .unwrap_or_else(|| context.current_file().to_str().unwrap()),
-                context.current_file().display(),
-            );
+            if self.verbosity > 0{
+                eprintln!(
+                    "Warning: Unable to find embedded note\n\tReference: '{}'\n\tSource: '{}'\n",
+                    note_ref
+                        .file
+                        .unwrap_or_else(|| context.current_file().to_str().unwrap()),
+                    context.current_file().display(),
+                );
+            }
             return Ok(vec![]);
         }
 
@@ -661,13 +665,15 @@ impl<'a> Exporter<'a> {
 
         if target_file.is_none() {
             // TODO: Extract into configurable function.
-            eprintln!(
-                "Warning: Unable to find referenced note\n\tReference: '{}'\n\tSource: '{}'\n",
-                reference
-                    .file
-                    .unwrap_or_else(|| context.current_file().to_str().unwrap()),
-                context.current_file().display(),
-            );
+            if self.verbosity > 0{
+                eprintln!(
+                    "Warning: Unable to find referenced note\n\tReference: '{}'\n\tSource: '{}'\n",
+                    reference
+                        .file
+                        .unwrap_or_else(|| context.current_file().to_str().unwrap()),
+                    context.current_file().display(),
+                );
+            }
             return vec![
                 Event::Start(Tag::Emphasis),
                 Event::Text(CowStr::from(reference.display())),
