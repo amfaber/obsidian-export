@@ -280,6 +280,21 @@ impl<'a> Exporter<'a> {
             verbosity: 1,
         }
     }
+    
+    pub fn new_silent(root: PathBuf, destination: PathBuf) -> Exporter<'a> {
+        Exporter {
+            start_at: root.clone(),
+            root,
+            destination,
+            frontmatter_strategy: FrontmatterStrategy::Auto,
+            walk_options: WalkOptions::default(),
+            process_embeds_recursively: true,
+            vault_contents: None,
+            postprocessors: vec![],
+            embed_postprocessors: vec![],
+            verbosity: 0,
+        }
+    }
 
     /// Set a custom starting point for the export.
     ///
